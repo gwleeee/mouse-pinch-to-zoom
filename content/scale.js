@@ -5,7 +5,9 @@
 // this is the main function which does the scaling (see scrollEvent() first)
 function scale(e, setZoom, scrollX = window.scrollX, scrollY = window.scrollY) {
     // save for calculations
-    const oldZoom = zoom;
+    // Workaround for a bug introduced in Chromium 133 - `zoom` is passed as reference and `oldZoom` is changed after changing `zoom`
+    const oldZoom = parseFloat(zoom.toString());
+
     const oldClientWidth = html.clientWidth;
     const oldClientHeight = html.clientHeight;
     const bodyMarginLeft = parseFloat(getComputedStyle(body).marginLeft);
