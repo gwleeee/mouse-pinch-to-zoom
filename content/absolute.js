@@ -6,19 +6,31 @@
 const absoluteObserver = new MutationObserver(absoluteCallback);
 let lastPageX = 0, lastPageY = 0;
 let lastScrollX = 0, lastScrollY = 0;
+let lastScrollInputAt = 0;
+const scrollRestoreGraceMs = 150;
 
 // keep mouse page and scroll position to move the element to the correct position
 document.addEventListener('mousemove', mouseEventHandler);
 document.addEventListener('wheel', mouseEventHandler);
+window.addEventListener('scroll', syncScrollPosition, { passive: true });
 // mouseEventHandler is also run in prep.js in wheel event handlers
 
 function mouseEventHandler(event) {
-    lastPageX = event.pageX;
-    lastPageY = event.pageY;
+    if (event.pageX !== undefined) lastPageX = event.pageX;
+    if (event.pageY !== undefined) lastPageY = event.pageY;
+    if (event.type === 'wheel') lastScrollInputAt = performance.now();
 
     // those values are also updated in scale()
+    syncScrollPosition();
+}
+
+function syncScrollPosition() {
     lastScrollX = window.scrollX;
     lastScrollY = window.scrollY;
+}
+
+function shouldPreserveUserScroll() {
+    return performance.now() - lastScrollInputAt < scrollRestoreGraceMs;
 }
 
 // runs the observer
@@ -71,7 +83,7 @@ function absoluteFix(e, mutation) {
     const r = e.getBoundingClientRect();
     const sBody = getComputedStyle(body);
 
-    if (window.scrollX !== lastScrollX || window.scrollY !== lastScrollY) {
+    if ((window.scrollX !== lastScrollX || window.scrollY !== lastScrollY) && !shouldPreserveUserScroll()) {
         window.scrollTo(lastScrollX, lastScrollY);
     }
 

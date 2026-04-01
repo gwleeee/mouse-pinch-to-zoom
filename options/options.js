@@ -2,7 +2,7 @@
 
 let settings = {
     advanced: 0,
-    mode: 0,
+    responsePreset: 1,
     speed: 1,
     speedCustom: 0.4,
     smoothness: 1,
@@ -147,7 +147,7 @@ function loadData() {
     if (settings.advanced) showAdvanced();
 
     // set radio buttons
-    document.querySelector('input[name="mode"][value="' + settings.mode + '"]').checked = true;
+    document.querySelector('input[name="responsePreset"][value="' + settings.responsePreset + '"]').checked = true;
     document.querySelector('input[name="speed"][value="' + settings.speed + '"]').checked = true;
     document.querySelector('input[name="smoothness"][value="' + settings.smoothness + '"]').checked = true;
 

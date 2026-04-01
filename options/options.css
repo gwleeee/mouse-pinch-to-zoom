@@ -71,6 +71,19 @@ h2 {
     margin-bottom: 10px;
 }
 
+.feature-card {
+    border: 1px solid #0075ff40;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: #0075ff12;
+}
+
+.feature-title {
+    font-weight: bold;
+    margin: 0 0 3px 0;
+}
+
 label {
     display: block;
     margin-bottom: 4px;
