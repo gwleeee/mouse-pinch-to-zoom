@@ -113,46 +113,53 @@ Your feedback will be used to improve the extension. Thank you!
     </div>
 
     <div>
-        <h2>Activation mode</h2>
-        <label>
-            <input type="radio" name="mode" value="0">
-            Alt + Scroll Wheel
+        <h2>Controls</h2>
+        <div class="feature-card">
+            <p class="feature-title">Ctrl + Scroll Wheel</p>
             <p class="tip">
-                Turn the mouse wheel while holding the Alt key to zoom
-                <br>
-                Click the mouse wheel while holding the Alt key to reset
+                Zoom the page content with the extension's custom zoom.
             </p>
-        </label>
-        <label>
-            <input type="radio" name="mode" value="1">
-            Right Mouse Button + Scroll Wheel
+        </div>
+        <div class="feature-card">
+            <p class="feature-title">Ctrl + Middle Click</p>
             <p class="tip">
-                Turn the mouse wheel while holding the right mouse button to zoom
-                <br>
-                Click the mouse wheel while holding the right mouse button to reset
+                Reset the extension zoom back to 100%.
             </p>
-        </label>
-        <label>
-            <input type="radio" name="mode" value="2">
-            Left Mouse Button + Scroll Wheel
+        </div>
+        <div class="feature-card">
+            <p class="feature-title">Ctrl + + / - / 0</p>
             <p class="tip">
-                Turn the mouse wheel while holding the left mouse button to zoom
-                <br>
-                Click the mouse wheel while holding the left mouse button to reset
+                Keep using Chrome's built-in browser zoom controls.
             </p>
-        </label>
-        <label>
-            <input type="radio" name="mode" value="3">
-            Ctrl + Scroll Wheel
-            <p class="tip">
-                Turn the mouse wheel while holding the Ctrl key to zoom
-                <br>
-                Click the mouse wheel while holding the Ctrl key to reset
-            </p>
-        </label>
+        </div>
     </div>
 
     <div>
+        <h2>Zoom Response</h2>
+        <p class="tip-h2">
+            Choose the curve first, then use Speed to scale it. Small wheel moves stay precise, while larger moves accelerate more strongly.
+        </p>
+        <label>
+            <input type="radio" name="responsePreset" value="0">
+            Precise
+            <p class="tip">
+                Gentler curve for finer control and smaller jumps per wheel movement.
+            </p>
+        </label>
+        <label>
+            <input type="radio" name="responsePreset" value="1">
+            Balanced
+            <p class="tip">
+                Default curve with a smooth ramp-up between precision and speed.
+            </p>
+        </label>
+        <label>
+            <input type="radio" name="responsePreset" value="2">
+            Aggressive
+            <p class="tip">
+                Stronger acceleration for faster zooming during larger wheel movements.
+            </p>
+        </label>
         <h2>Speed</h2>
         <label>
             <input type="radio" name="speed" value="0">
@@ -195,7 +202,7 @@ Your feedback will be used to improve the extension. Thank you!
                     Recommended if you usually zoom slightly
                 </p>
                 <p>
-                    Higher values will make the zoom faster, but less precise
+                    Higher values will make the zoom faster, especially during larger wheel movements
                     <br>
                     Recommended if you usually zoom closely
                 </p>
@@ -246,7 +253,7 @@ Your feedback will be used to improve the extension. Thank you!
                 <p>
                     Higher values will feel smoother, but less responsive
                 </p>
-                </p>
+            </div>
         </label>
     </div>
 
@@ -303,10 +310,6 @@ Your feedback will be used to improve the extension. Thank you!
                 This will add a red border to all elements that are affected by this fix
             </p>
         </label>
-    </div>
-
-    <div>
-        <h2></h2>
     </div>
 </body>
 

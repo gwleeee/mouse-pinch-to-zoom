@@ -6,7 +6,8 @@ chrome.runtime.onInstalled.addListener(details => {
         // configure default memory
         const defaultSettings = {
             advanced: 0,
-            mode: 0,
+            mode: 3,
+            responsePreset: 1,
             speed: 1,
             speedCustom: 0.4,
             mult: 0.4,
