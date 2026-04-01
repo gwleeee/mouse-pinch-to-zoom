@@ -8,9 +8,11 @@ let triggered = false;
 let lastEvent, nextEvent;
 let configured = false;
 const ID = chrome.runtime.id;
+const mode = 3;
 
 // default settings values
-let mode = 0, mult = 0.4, steps = 5;
+let mult = 0.4, steps = 5;
+let responsePreset = 1;
 let fixFixed = true;
 let fixFixedTransparency = true;
 let fixAbsolute = true;
@@ -19,12 +21,12 @@ let fixTouchpadScroll = true;
 let fixTouchpadScrollThreshold = 30;
 
 // read settings from storage
-chrome.storage.sync.get(['mode', 'mult', 'steps', 'fixFixed', 'fixFixedTransparency', 'fixAbsolute', 'fixAbsoluteBorder', 'fixTouchpadScroll', 'fixTouchpadScrollThreshold'], items => {
+chrome.storage.sync.get(['mult', 'steps', 'responsePreset', 'fixFixed', 'fixFixedTransparency', 'fixAbsolute', 'fixAbsoluteBorder', 'fixTouchpadScroll', 'fixTouchpadScrollThreshold'], items => {
 	if (chrome.runtime.lastError) console.error(chrome.runtime.lastError);
 	else {
-		if (items.mult) mult = items.mult;
-		if (items.steps) steps = items.steps;
-		if (items.mode) mode = items.mode;
+		if (items.mult !== undefined) mult = items.mult;
+		if (items.steps !== undefined) steps = items.steps;
+		if (items.responsePreset !== undefined) responsePreset = Number(items.responsePreset);
 
 		if (items.fixFixed !== undefined) fixFixed = items.fixFixed;
 		if (items.fixFixedTransparency !== undefined) fixFixedTransparency = items.fixFixedTransparency;
@@ -40,12 +42,9 @@ chrome.storage.sync.get(['mode', 'mult', 'steps', 'fixFixed', 'fixFixedTranspare
 // update settings if the user changes them
 chrome.storage.onChanged.addListener((changes, areaName) => {
 	if (areaName == 'sync') {
-		if (changes.mode) {
-			modeUnset(changes.mode.oldValue);
-			modeSet(changes.mode.newValue);
-		}
 		if (changes.mult) mult = changes.mult.newValue;
 		if (changes.steps) steps = changes.steps.newValue;
+		if (changes.responsePreset) responsePreset = Number(changes.responsePreset.newValue);
 	}
 });
 
@@ -74,10 +73,18 @@ const modeListeners = [
 	],
 	[
 		// mode 3 - CTRL
-		['wheel', mode3Wheel, { passive: false }],
-		['mousedown', mode3MouseDown, { passive: false }],
-		['keydown', mode3KeyDown, { passive: false }]
+		['mousedown', mode3MouseDown, { passive: false }]
 	],
+];
+
+const modeWindowListeners = [
+	[],
+	[],
+	[],
+	[
+		// capture the wheel before the page or browser default zoom handles it
+		['wheel', mode3Wheel, { passive: false, capture: true }]
+	]
 ];
 
 // mode set/unset
@@ -86,14 +93,20 @@ function modeSet(m) {
 	rightButtonPressed = false;
 	leftButtonPressed = false;
 	blockContextMenu = false;
-	modeListeners[m].forEach(e => {
+	(modeListeners[m] || []).forEach(e => {
 		document.addEventListener(e[0], e[1], e[2]);
-	})
+	});
+	(modeWindowListeners[m] || []).forEach(e => {
+		window.addEventListener(e[0], e[1], e[2]);
+	});
 }
 function modeUnset(m) {
-	modeListeners[m].forEach(e => {
+	(modeListeners[m] || []).forEach(e => {
 		document.removeEventListener(e[0], e[1], e[2]);
-	})
+	});
+	(modeWindowListeners[m] || []).forEach(e => {
+		window.removeEventListener(e[0], e[1], e[2]);
+	});
 }
 
 // mode 0 listeners
@@ -179,7 +192,8 @@ function mode2MouseDownM(e) {
 // mode 3 listeners
 function mode3Wheel(e) {
 	if (e.ctrlKey) {
-		e.preventDefault(); // prevents the page from scrolling when the user turns the wheel
+		if (!e.cancelable) return;
+		e.preventDefault(); // prevents the page or browser from consuming ctrl+wheel for native zoom
 		e.stopImmediatePropagation(); // prevents other listeners from triggering (i'm not sure if it's necessary with preventDefault)
 		scrollEvent(e);
 		mouseEventHandler(e);
@@ -193,8 +207,3 @@ function mode3MouseDown(e) {
 	}
 }
 
-function mode3KeyDown(e) {
-	if (e.code === 'CtrlLeft') {
-		e.preventDefault();
-	}
-}
